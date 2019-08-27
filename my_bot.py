@@ -1,62 +1,92 @@
-
 import discord
+from discord.ext import commands
 import random
+import tweepy
+import asyncio
+
+# This also uses the Tweepy Twitter API for a command
+
+auth = tweepy.OAuthHandler("TOKEN",
+                           "TOKEN")
+
+auth.set_access_token("TOKEN",
+                      "TOKEN")
+
+api = tweepy.API(auth)
+
+bot = commands.Bot(command_prefix="!")
 
 list = [1, 2, 3, 4, 5, 6]
 hot = ["Heads", "Tails"]
-number = int
+img = 'https://i.ytimg.com/vi/wbjUAgtb27g/maxresdefault.jpg'
+img2 = 'https://i.ytimg.com/vi/6-ey4j9rrO0/maxresdefault.jpg'
+img3 = 'https://meme.xyz/uploads/posts/t/l-32881-pewdiepie-memes-claps-twice-guess-ill-die.jpg'
+img4 = 'https://pics.me.me/them-isnt-my-baby-so-cute-their-baby-55986217.png'
+img5 = 'https://pics.me.me/memes-2019-memes-2012-has-a-pet-rock-it-runs-57399376.png'
+img6 = 'https://i.chzbgr.com/full/9233901568/hB41CDDDE/'
+img7 = 'https://i.redd.it/8nf2xnv2so211.jpg'
+img8 = 'https://i.kym-cdn.com/photos/images/original/001/522/196/09e.png'
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print('Logged in as')
-        print(self.user.name)
-        print(self.user.id)
-        print('------')
+memePicker = [img, img2, img3, img4, img5, img6, img7, img8]
 
-    async def on_message(self, message):
-        # we do not want the bot to reply to itself
-        if message.author.id == self.user.id:
-            return
+@bot.event
+async def on_ready():
+    print('Logged in as:')
+    print(bot.user.name)
 
-        if message.content.startswith('!hello'):
-            await message.channel.send('Hello {0.author.mention}'.format(message))
+@bot.command(pass_context=True,
+             description="Welcome to the Soviet Union")
+async def welcome(ctx):
+    await ctx.send('добро пожаловать в советский союз! коммунист и гордый')
 
-        if message.content.startswith('!creeper'):
-            await message.channel.send('Creeper Aw Man')
-            await message.channel.send('So we back in the mine')
-            await message.channel.send('Got our pickaxe swinging from side to side')
-            await message.channel.send('Side-side to side')
+# Flips a coin
+@bot.command(pass_context=True,
+             description="Heads or tails")
+async def flipcoin(ctx):
+    await ctx.send(random.choice(hot))
 
-        if message.content.startswith('!help'):
-            await message.channel.send('Commands:'
-                                       '!creeper'
-                                       '!hello'
-                                       '!help'
-                                       '!bismillah'
-                                       '!rolldice'
-                                       '!flipcoin'
-                                       '!memereview'
-                                       '!fortnite'
-                                       '!bitch')
+# Rolls a dice
+@bot.command(pass_context=True,
+             description="Roll a dice")
+async def rolldice(ctx):
+    await ctx.send(random.choice(list))
 
-        if message.content.startswith('!fortnite'):
-            await message.channel.send('is trash')
+# PewDiePie's meme review
+@bot.command(pass_context=True,
+             description="This obviously doesn't need a description")
+async def memereview(ctx):
+    await ctx.send('👏')
+    await ctx.send('👏')
+    await ctx.send(random.choice(memePicker))
 
-        if message.content.startswith('!bitch'):
-            await message.channel.send('lasagna')
+# Discord bot sings CaptainSparklez's song "Revenge"
+@bot.command(pass_context = True,
+             description="Revenge - CaptainSparklez")
+async def creeper(ctx):
+    await ctx.send('Creeper, aw man')
+    await ctx.send('So we back in the mine')
+    await ctx.send('Got our pickaxe swinging from')
+    await ctx.send('Side to side')
+    await ctx.send('Side-side to side')
 
-        if message.content.startswith('!bismillah'):
-            await message.channel.send('Audoo Billahi, Himin Ashaythaan Nira Jeem')
+# You can use this command to search Twitter for tweets containing a keyword
+@bot.command(pass_context=True,
+             description="Searches for tweets on Twitter")
+async def search(ctx, arg):
+    for tweet in api.search(q=arg, lang="en", rpp=5):
+        await ctx.send(f"{tweet.user.name}: {tweet.text}")
 
-        if message.content.startswith('!rolldice'):
-            await message.channel.send(random.choice(list))
+# This command solves math problems
+@bot.command(pass_context = True,
+             description='Helps you with your math homework')
+async def math(ctx, int1, int2):
+    await ctx.send('Added:')
+    await ctx.send(int(int1) + int(int2))
+    await ctx.send('Subtracted:')
+    await ctx.send(int(int1) - int(int2))
+    await ctx.send('Multiplied:')
+    await ctx.send(int(int1) * int(int2))
+    await ctx.send('Divided:')
+    await ctx.send(int(int1) / int(int2))
 
-        if message.content.startswith('!flipcoin'):
-            await message.channel.send(random.choice(hot))
-
-        if message.content.startswith('!memereview'):
-            await message.channel.send('👏')
-            await message.channel.send('👏')
-
-client = MyClient()
-client.run('NjEwODY4OTI2NTY1NDQ5ODY1.XVMG4w.OSUE0MPdGwmtkTyYHGOoZ8xwSSs')
+bot.run(TOKEN)
