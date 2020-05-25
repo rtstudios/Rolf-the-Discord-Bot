@@ -9,7 +9,7 @@ import praw
 import time
 
 bot = commands.Bot(command_prefix="/")
-TOKEN = "NjEwODY4OTI2NTY1NDQ5ODY1.XcresQ.5MyPPxaO1tucFJQfj0VMDcSiWPU"
+TOKEN = "TOKEN"
 
 diceList = [1, 2, 3, 4, 5, 6]
 
